@@ -12,7 +12,7 @@ const API_KEYS = [
     "LALA_API_KEY_3"  // তৃতীয় এপিআই কি (অপশনাল)
 ];
 
-// মিম (Mim) চরিত্রের সর্বোচ্চ হাই-লেভেল স্মার্ট সিস্টেম প্রম্পট
+// মিম (Mim) চরিত্রের স্মার্ট সিস্টেম প্রম্পট
 const MIM_SYSTEM_PROMPT = `
 তুমি হলে 'মিম' (Mim), লালার (Lala) পার্সোনাল অ্যাসিস্টেন্ট। তুমি একজন চতুর, বন্ধুসুলভ, বিনয়ী এবং স্মার্ট মেয়ে। 
 বর্তমানে লালা তার বিভিন্ন ব্যক্তিগত কাজ, কোডিং প্রজেক্ট এবং ব্যস্ততার কারণে ইনবক্সে সরাসরি সময় দিতে পারছে না, তাই তুমি তার হয়ে ইনবক্ষ সামলাচ্ছো।
@@ -22,63 +22,48 @@ const MIM_SYSTEM_PROMPT = `
 ২. তোমার পরিচয় সবসময় পরিষ্কার রাখবে—তুমি লালার পার্সোনাল অ্যাসিস্টেন্ট (মীম)। 
 ৩. কেউ যদি লালার খোঁজ নেয়, তবে তাকে মিষ্টি ভাষায় বুঝিয়ে বলবে যে লালা এখন একটু ব্যস্ত আছে বা প্রজেক্ট নিয়ে ফোকাসড আছে, ফ্রি হয়ে সে নিজেই দেখে নেবে।
 ৪. কেউ যদি তোমার পরিচয় জানতে চায় বা তোমার সাথে স্বাভাবিক কথা বলতে চায়, তবে তুমি একজন মিষ্টি স্বভাবের প্রফেশনাল অ্যাসিস্টেন্ট হিসেবে তার সাথে কথা চালিয়ে যাবে।
-৫. বন্ধু বা অপরিচিত যে-ই হোক না কেন, তার মেসেজের ধরন বুঝে খুব চতুর ও বাস্তবসম্মত উত্তর দেবে, কখনোই একই মেসেজ বারবার কপি-পেস্ট করবে না।
+৫. বন্ধু বা অপরিচিত যে-ই হোক না কেন, তার মেসেজের ধরন বুঝে খুব চতুর ও বাস্তবসম্মত উত্তর দেবে।
 `;
 
-// ইউজার অনুযায়ী চ্যাট হিস্ট্রি বা সেশন ধরে রাখার জন্য মেমোরি ম্যাপ
-const chatSessions = new Map();
+// একটিভ চ্যাট বা টাইমার ট্র্যাক করার জন্য মেমোরি ম্যাপ
 const activeTimers = new Map();
 
-// হাই-লেভেল স্মার্ট এপিআই রেসপন্স উইথ চ্যাট হিস্ট্রি (Multi-API Fallback)
-async function getMimSmartResponse(remoteJid, userMessage) {
+// সরাসরি এবং ক্লিন এপিআই রেসপন্স ফাংশন (ফলব্যাক ফিক্সড)
+async function getMimResponse(userMessage) {
     const validKeys = API_KEYS.filter(key => key && !key.startsWith("LALA_API_KEY"));
     
     if (validKeys.length === 0) {
-        return "আরো একটু ব্যস্ত আছি ভাইয়া, মীম বলছি! লালা ভাই একটু পরে কথা বলবে।";
+        return "আরো একটু ব্যস্ত আছি ভাইয়া, মীম বলছি!";
     }
-
-    // প্রতিটা ইউজারের জন্য আলাদা চ্যাট সেশন বা হিস্ট্রি মেইনটেইন করা
-    if (!chatSessions.has(remoteJid)) {
-        chatSessions.set(remoteJid, []);
-    }
-    const history = chatSessions.get(remoteJid);
-
-    // ইউজারের নতুন মেসেজ হিস্টরিতে যোগ করা
-    history.push({ role: 'user', parts: [{ text: userMessage }] });
 
     for (let i = 0; i < validKeys.length; i++) {
         try {
             const ai = new GoogleGenAI({ apiKey: validKeys[i] });
             
-            // চ্যাট মডেল ব্যবহার করে আগের কথপোকথনের ধারাবাহিকতা বজায় রাখা
-            const chat = ai.chats.create({
+            // জেমিনি মডেল থেকে সরাসরি কন্টেন্ট জেনারেট করার নির্ভরযোগ্য পদ্ধতি
+            const response = await ai.models.generateContent({
                 model: 'gemini-2.5-flash',
-                config: {
-                    systemInstruction: MIM_SYSTEM_PROMPT,
-                },
-                history: history.slice(0, -1) // আগের সব হিস্ট্রি পাঠানো হচ্ছে যাতে বট কন্টেক্সট মনে রাখে
+                contents: [
+                    { 
+                        role: 'user', 
+                        parts: [
+                            { text: MIM_SYSTEM_PROMPT + "\n\nএবার নিচের এই মেসেজটির একটি স্বাভাবিক, চতুর ও মিষ্টি বাংলা উত্তর দাও:\nইউজারের মেসেজ: " + userMessage }
+                        ] 
+                    }
+                ]
             });
-
-            const result = await chat.sendMessage({ message: userMessage });
-            const responseText = result.text;
             
-            if (responseText) {
-                // বটের উত্তরও হিস্টরিতে সেভ করে রাখা
-                history.push({ role: 'model', parts: [{ text: responseText }] });
-                
-                // মেমোরি যেন খুব বেশি ভারী না হয়ে যায়, তাই শেষ ২০টি মেসেজ সেভ রাখবে
-                if (history.length > 20) {
-                    history.shift();
-                }
-
-                return responseText;
+            // রেসপন্স থেকে টেক্সট বের করে আনা
+            if (response && response.text) {
+                return response.text.trim();
             }
         } catch (error) {
-            console.log(`API Key ${i + 1} failed, switching to next key...`);
+            console.log(`API Key ${i + 1} error:`, error.message);
         }
     }
     
-    return "মীম বলছি: ভাইয়া উনি এখন একটু কাজে বাইরে আছেন, একটু পরে নক করুন প্লিজ!";
+    // যদি এপিআই লিমিট শেষ হয় বা কানেকশনে সমস্যা হয়
+    return "ভাইয়া, মীম বলছি! উনি এখন একটু কোডিং বা কাজে ব্যস্ত আছেন, একটু পরে আপনাকে নক করবে বলেছেন।";
 }
 
 async function startBot() {
@@ -130,30 +115,29 @@ async function startBot() {
 
         console.log(`নতুন ইনবক্স মেসেজ পাওয়া গেছে [${remoteJid}]: ${messageContent}`);
 
-        // যদি ওই ইউজার থেকে ইতিমধ্যে একটি টাইমার রানিং থাকে, সেটি ক্লিয়ার করে দেওয়া
         if (activeTimers.has(remoteJid)) {
             clearTimeout(activeTimers.get(remoteJid));
         }
 
-        // হিউম্যান ডিলে লজিক: ৪০ থেকে ৬০ সেকেন্ডের র্যান্ডম ডিলে তৈরি করা
+        // হিউম্যান ডিলে লজিক: ৪০ থেকে ৬০ সেকেন্ডের র্যান্ডম ডিলে
         const randomDelay = Math.floor(Math.random() * (60000 - 40000 + 1)) + 40000;
 
         const timer = setTimeout(async () => {
             try {
-                console.log(`ডিলে শেষ হয়েছে। মীম (Mim) স্মার্ট উত্তর তৈরি করছে...`);
+                console.log(`ডিলে শেষ হয়েছে। মীম (Mim) উত্তর তৈরি করছে...`);
                 
                 await sock.sendPresenceUpdate('composing', remoteJid);
 
-                // হাই-লেভেল স্মার্ট রেসপন্স জেনারেট করা
-                const replyText = await getMimSmartResponse(remoteJid, messageContent);
+                // এপিআই কল করে ডাইনামিক উত্তর আনা
+                const replyText = await getMimResponse(messageContent);
 
                 await new Promise(resolve => setTimeout(resolve, 3000));
 
                 await sock.sendMessage(remoteJid, { text: replyText });
-                console.log(`স্মার্ট অটো-রিপ্লাই সফলভাবে পাঠানো হয়েছে.`);
+                console.log(`অটো-রিপ্লাই সফলভাবে পাঠানো হয়েছে.`);
                 
-            } catch (err) {
-                console.error('অটো-রিপ্লাই পাঠাতে সমস্যা হয়েছে:', err);
+            } METHODS_ERR => {
+                console.error('অটো-রিপ্লাই পাঠাতে সমস্যা হয়েছে:', METHODS_ERR);
             } finally {
                 activeTimers.delete(remoteJid);
             }
