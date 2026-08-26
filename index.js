@@ -1,7 +1,7 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
-const axios = require('axios');
+const { GoogleGenAI } = require('@google/genai');
 
 const colors = {
     reset: "\x1b[0m",
@@ -20,8 +20,8 @@ function printBanner() {
     console.log("==================================================" + colors.reset);
 }
 
-// এখানে আপনার আসল 'AIzaSy' দিয়ে শুরু হওয়া এপিআই কি বসাবেন
-const API_KEY = "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY"; 
+// আপনার দেওয়া এপিআই কি (এটি জেমিনির অফিশিয়াল এসডিকে দিয়ে জেনারেট করবে)
+const ai = new GoogleGenAI({ apiKey: "AQ.Ab8RN6L4SwiXapZ8SXJuMJIxYTwj1AO4I2n_vy21yQiDvcOjKg" });
 
 const MIM_SYSTEM_PROMPT = `
 তুমি হলে 'মিম' (Mim), লালার পার্সোনাল অ্যাসিস্টেন্ট। তুমি খুব চতুর, বন্ধুসুলভ এবং স্মার্ট মেয়ে। 
@@ -32,31 +32,26 @@ const activeTimers = new Map();
 
 async function getMimResponse(userMessage) {
     try {
-        // স্ট্যান্ডার্ড AIzaSy কি-এর জন্য জেমিনি v1beta এন্ডপয়েন্ট
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-        
-        const response = await axios.post(url, {
+        // জেমিনির একদম লেটেস্ট এবং রিকমেন্ডেড মডেল
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.0-flash',
             contents: [
                 {
-                    parts: [
-                        { text: MIM_SYSTEM_PROMPT + "\n\nইউজারের মেসেজ: " + userMessage }
-                    ]
+                    role: 'user',
+                    parts: [{ text: MIM_SYSTEM_PROMPT + "\n\nইউজারের মেসেজ: " + userMessage }]
                 }
             ]
         });
 
-        if (response.data && 
-            response.data.candidates && 
-            response.data.candidates[0].content && 
-            response.data.candidates[0].content.parts[0].text) {
-            return response.data.candidates[0].content.parts[0].text.trim();
+        if (response && response.text) {
+            return response.text.trim();
+        } else {
+            throw new Error("খালি রেসপন্স এসেছে।");
         }
     } catch (error) {
-        console.error(colors.red + `❌ API Error:` + colors.reset, error.response?.data?.error?.message || error.message);
+        console.error(colors.red + `❌ API Error:` + colors.reset, error.message);
         throw error;
     }
-    
-    throw new Error("এপিআই থেকে কোনো রেসপন্স পাওয়া যায়নি।");
 }
 
 async function startBot() {
