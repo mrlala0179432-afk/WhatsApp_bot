@@ -1,9 +1,8 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
-const { GoogleGenAI } = require('@google/genai');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
+const axios = require('axios');
 
-// টার্মিনালে কালারিং টেক্সট দেখানোর জন্য কালার কোড
 const colors = {
     reset: "\x1b[0m",
     bright: "\x1b[1m",
@@ -14,7 +13,6 @@ const colors = {
     red: "\x1b[31m"
 };
 
-// টার্মিনালে কালারফুল স্টাইলিশ ব্যানার প্রিন্ট করার ফাংশন
 function printBanner() {
     console.log(colors.cyan + colors.bright + "==================================================");
     console.log("       🤖 LALA ASSISTANT BOT IS RUNNING...        ");
@@ -23,13 +21,12 @@ function printBanner() {
 }
 
 // ==========================================
-// কনফিগারেশন এবং এপিআই কি
+// আপনার এআই স্টুডিওর নতুন এপিআই কি এখানে বসানো হলো
 // ==========================================
 const API_KEYS = [
-    "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY" // আপনার আসল এপিআই কি
+    "AQ.Ab8RN6L4SwiXapZ8SXJuMJIxYTwj1AO4I2n_vy21yQiDvcOjKg"
 ];
 
-// মিম (Mim) চরিত্রের স্মার্ট সিস্টেম প্রম্পট
 const MIM_SYSTEM_PROMPT = `
 তুমি হলে 'মিম' (Mim), লালার পার্সোনাল অ্যাসিস্টেন্ট। তুমি খুব চতুর, বন্ধুসুলভ এবং স্মার্ট মেয়ে। 
 বর্তমানে লালা ব্যস্ত থাকায় তুমি তার হয়ে ইনবক্স সামলাচ্ছো। ইউজারের মেসেজ পড়ে একদম প্রাকৃতিকভাবে, ভিন্ন ভিন্ন ও বাস্তবসম্মত উত্তর দেবে।
@@ -38,35 +35,35 @@ const MIM_SYSTEM_PROMPT = `
 const activeTimers = new Map();
 
 async function getMimResponse(userMessage) {
-    const validKeys = API_KEYS.filter(key => key && key.startsWith("AIzaSy"));
-    
-    if (validKeys.length === 0) {
-        throw new Error("❌ কোনো ভ্যালিড জেমিনি এপিআই কি পাওয়া যায়নি!");
+    if (API_KEYS.length === 0) {
+        throw new Error("❌ কোনো এপিআই কি পাওয়া যায়নি!");
     }
 
-    for (let i = 0; i < validKeys.length; i++) {
+    for (let i = 0; i < API_KEYS.length; i++) {
         try {
-            const ai = new GoogleGenAI({ apiKey: validKeys[i] });
+            const apiKey = API_KEYS[i];
+            // জেমিনির লেটেস্ট জেনারেশন মডেল এন্ডপয়েন্ট (v1beta)
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             
-            // গুগল সার্ভারের রিকোয়ারমেন্ট অনুযায়ী সঠিক লেটেস্ট মডেল নাম
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.0-flash',
+            const response = await axios.post(url, {
                 contents: [
-                    { 
-                        role: 'user', 
+                    {
                         parts: [
                             { text: MIM_SYSTEM_PROMPT + "\n\nইউজারের মেসেজ: " + userMessage }
-                        ] 
+                        ]
                     }
                 ]
             });
-            
-            if (response && response.text) {
-                return response.text.trim();
+
+            if (response.data && 
+                response.data.candidates && 
+                response.data.candidates[0].content && 
+                response.data.candidates[0].content.parts[0].text) {
+                return response.data.candidates[0].content.parts[0].text.trim();
             }
         } catch (error) {
-            console.error(colors.red + `❌ API Key ${i + 1} Failed:` + colors.reset, error.message);
-            if (i === validKeys.length - 1) {
+            console.error(colors.red + `❌ API Key ${i + 1} Failed:` + colors.reset, error.response?.data?.error?.message || error.message);
+            if (i === API_KEYS.length - 1) {
                 throw error;
             }
         }
