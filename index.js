@@ -3,6 +3,25 @@ const { GoogleGenAI } = require('@google/genai');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
 
+// টার্মিনালে কালারিং টেক্সট দেখানোর জন্য কালার কোড
+const colors = {
+    reset: "\x1b[0m",
+    bright: "\x1b[1m",
+    cyan: "\x1b[36m",
+    green: "\x1b[32m",
+    yellow: "\x1b[33m",
+    magenta: "\x1b[35m",
+    red: "\x1b[31m"
+};
+
+// টার্মিনালে কালারফুল স্টাইলিশ ব্যানার প্রিন্ট করার ফাংশন
+function printBanner() {
+    console.log(colors.cyan + colors.bright + "==================================================");
+    console.log("       🤖 LALA ASSISTANT BOT IS RUNNING...        ");
+    console.log("       Powered by Google Gemini & Baileys         ");
+    console.log("==================================================" + colors.reset);
+}
+
 // ==========================================
 // কনফিগারেশন এবং এপিআই কি
 // ==========================================
@@ -29,9 +48,8 @@ async function getMimResponse(userMessage) {
         try {
             const ai = new GoogleGenAI({ apiKey: validKeys[i] });
             
-            // এখানে মডেলের নাম gemini-1.5-flash করা হয়েছে যা বর্তমান এপিআই তে ফুল সাপোর্ট করে
             const response = await ai.models.generateContent({
-                model: 'gemini-1.5-flash',
+                model: 'gemini-2.5-flash',
                 contents: [
                     { 
                         role: 'user', 
@@ -46,7 +64,7 @@ async function getMimResponse(userMessage) {
                 return response.text.trim();
             }
         } catch (error) {
-            console.error(`❌ API Key ${i + 1} Failed:`, error.message);
+            console.error(colors.red + `❌ API Key ${i + 1} Failed:` + colors.reset, error.message);
             if (i === validKeys.length - 1) {
                 throw error;
             }
@@ -57,6 +75,9 @@ async function getMimResponse(userMessage) {
 }
 
 async function startBot() {
+    // টার্মিনালে কালারফুল ব্যানার প্রিন্ট হবে
+    printBanner();
+
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
 
     const sock = makeWASocket({
@@ -70,18 +91,18 @@ async function startBot() {
         const { connection, lastDisconnect, qr } = update;
 
         if (qr) {
-            console.log('\nস্ক্যান করার জন্য কিউআর কোড নিচে দেওয়া হলো:');
+            console.log(colors.yellow + '\nস্ক্যান করার জন্য কিউআর কোড নিচে দেওয়া হলো:' + colors.reset);
             qrcode.generate(qr, { small: true });
         }
 
         if (connection === 'close') {
             const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
-            console.log('কানেকশন বিচ্ছিন্ন হয়েছে, পুনরায় কানেক্ট করা হচ্ছে...', shouldReconnect);
+            console.log(colors.red + 'কানেকশন বিচ্ছিন্ন হয়েছে, পুনরায় কানেক্ট করা হচ্ছে...' + colors.reset, shouldReconnect);
             if (shouldReconnect) {
                 startBot();
             }
         } else if (connection === 'open') {
-            console.log('আলহামদুলিল্লাহ! বট সফলভাবে আপনার হোয়াটসঅ্যাপ অ্যাকাউন্টে কানেক্ট হয়েছে!');
+            console.log(colors.green + '✨ আলহামদুলিল্লাহ! লালা অ্যাসিস্টেন্ট বট সফলভাবে হোয়াটসঅ্যাপে কানেক্ট হয়েছে!' + colors.reset);
         }
     });
 
@@ -102,7 +123,7 @@ async function startBot() {
 
         if (!messageContent) return;
 
-        console.log(`নতুন ইনবক্স মেসেজ পাওয়া গেছে [${remoteJid}]: ${messageContent}`);
+        console.log(colors.magenta + `📥 নতুন মেসেজ পাওয়া গেছে [${remoteJid}]: ${messageContent}` + colors.reset);
 
         if (activeTimers.has(remoteJid)) {
             clearTimeout(activeTimers.get(remoteJid));
@@ -112,7 +133,7 @@ async function startBot() {
 
         const timer = setTimeout(async () => {
             try {
-                console.log(`ডিলে শেষ হয়েছে। জেমিনি এপিআই কল করা হচ্ছে...`);
+                console.log(colors.yellow + `⏳ ডিলে শেষ। জেমিনি এপিআই কল করা হচ্ছে...` + colors.reset);
                 
                 await sock.sendPresenceUpdate('composing', remoteJid);
 
@@ -121,10 +142,10 @@ async function startBot() {
                 await new Promise(resolve => setTimeout(resolve, 3000));
 
                 await sock.sendMessage(remoteJid, { text: replyText });
-                console.log(`সফলভাবে এপিআই রেসপন্স পাঠানো হয়েছে.`);
+                console.log(colors.green + `✅ সফলভাবে এপিআই রেসপন্স পাঠানো হয়েছে.` + colors.reset);
                 
             } catch (error) {
-                console.error('❌ এপিআই প্রসেসিং ফেইল করেছে:', error.message);
+                console.error(colors.red + '❌ এপিআই প্রসেসিং ফেইল করেছে:', error.message + colors.reset);
             } finally {
                 activeTimers.delete(remoteJid);
             }
