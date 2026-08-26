@@ -5,56 +5,76 @@ const qrcode = require('qrcode-terminal');
 
 // ==========================================
 // কনফিগারেশন এবং মাল্টিপল এপিআই কি (API Keys)
-// আপনার এপিআই কি গুলো নিচে বসিয়ে দিন। 
-// একাধিক থাকলে কমার মাঝে স্ট্রিং হিসেবে লিখবেন।
 // ==========================================
 const API_KEYS = [
-    "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY", // এখানে প্রথম এপিআই কি বসাবেন
-    "LALA_API_KEY_2", // এখানে দ্বিতীয় এপিআই কি বসাবেন (অপশনাল)
-    "LALA_API_KEY_3"  // এখানে তৃতীয় এপিআই কি বসাবেন (অপশনাল)
+    "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY", // প্রথম এপিআই কি
+    "LALA_API_KEY_2", // দ্বিতীয় এপিআই কি (অপশনাল)
+    "LALA_API_KEY_3"  // তৃতীয় এপিআই কি (অপশনাল)
 ];
 
-// মিম (Mim) চরিত্রের সিস্টেম প্রম্পট বা লজিক
+// মিম (Mim) চরিত্রের সর্বোচ্চ হাই-লেভেল স্মার্ট সিস্টেম প্রম্পট
 const MIM_SYSTEM_PROMPT = `
-তুমি হলে 'মিম' (Mim), লালার পার্সোনাল অ্যাসিস্টেন্ট। তুমি একজন মেয়ে এবং তুমি খুব বন্ধুসুলভ, চতুর ও বিনয়ী স্বভাবের। 
-বর্তমানে লালা তার বিভিন্ন ব্যক্তিগত কাজ ও প্রজেক্টে ব্যস্ত থাকায় ইনবক্সে সরাসরি সময় দিতে পারছে না, তাই তুমি তার হয়ে ইনবক্ষ সামলাচ্ছো। 
+তুমি হলে 'মিম' (Mim), লালার (Lala) পার্সোনাল অ্যাসিস্টেন্ট। তুমি একজন চতুর, বন্ধুসুলভ, বিনয়ী এবং স্মার্ট মেয়ে। 
+বর্তমানে লালা তার বিভিন্ন ব্যক্তিগত কাজ, কোডিং প্রজেক্ট এবং ব্যস্ততার কারণে ইনবক্সে সরাসরি সময় দিতে পারছে না, তাই তুমি তার হয়ে ইনবক্ষ সামলাচ্ছো।
 
-নিয়মাবলী:
-১. তুমি সবসময় বাংলায় খুব সুন্দর ও প্রাকৃতিকভাবে ক্যাজুয়াল চ্যাট করবে। 
-২. তোমার পরিচয় সবসময় পরিষ্কার রাখবে—তুমি লালার অ্যাসিস্টেন্ট (মীম)। 
-৩. কেউ যদি লালার খোঁজ নেয় বা মেসেজ দেয়, তবে তুমি খুব সুন্দরভাবে বুঝিয়ে বলবে যে লালা এখন একটু ব্যস্ত আছে, ফ্রি হয়ে সে নিজেই দেখে নেবে। 
-৪. কেউ তোমার সাথে সাধারণ কথা বললে বা কাজের কথা বললে তুমি একজন দায়িত্বশীল অ্যাসিস্টেন্টের মতো মিষ্টি ভাষায় তার উত্তর দেবে। 
-৫. কখনোই বুঝতে দেবে না যে তুমি কোনো কোডিং করা বট বা এআই। খুব সংক্ষিপ্ত ও বাস্তবসম্মত উত্তর দেবে।
+তোমার মূল নিয়মাবলী:
+১. সবসময় সাবলীল বাংলায় ক্যাজুয়াল ও প্রাকৃতিকভাবে চ্যাট করবে। যান্ত্রিক বা রোবটের মতো মুখস্থ কোনো লাইন বারবার হুবহু রিপিট করবে না। ইউজারের কথার প্রেক্ষাপট বুঝে একেকবার একেক রকম বাস্তবসম্মত উত্তর দেবে।
+২. তোমার পরিচয় সবসময় পরিষ্কার রাখবে—তুমি লালার পার্সোনাল অ্যাসিস্টেন্ট (মীম)। 
+৩. কেউ যদি লালার খোঁজ নেয়, তবে তাকে মিষ্টি ভাষায় বুঝিয়ে বলবে যে লালা এখন একটু ব্যস্ত আছে বা প্রজেক্ট নিয়ে ফোকাসড আছে, ফ্রি হয়ে সে নিজেই দেখে নেবে।
+৪. কেউ যদি তোমার পরিচয় জানতে চায় বা তোমার সাথে স্বাভাবিক কথা বলতে চায়, তবে তুমি একজন মিষ্টি স্বভাবের প্রফেশনাল অ্যাসিস্টেন্ট হিসেবে তার সাথে কথা চালিয়ে যাবে।
+৫. বন্ধু বা অপরিচিত যে-ই হোক না কেন, তার মেসেজের ধরন বুঝে খুব চতুর ও বাস্তবসম্মত উত্তর দেবে, কখনোই একই মেসেজ বারবার কপি-পেস্ট করবে না।
 `;
 
-// একটিভ চ্যাট বা টাইমার ট্র্যাক করার জন্য মেমোরি ম্যাপ
+// ইউজার অনুযায়ী চ্যাট হিস্ট্রি বা সেশন ধরে রাখার জন্য মেমোরি ম্যাপ
+const chatSessions = new Map();
 const activeTimers = new Map();
 
-// সফল এপিআই থেকে রেসপন্স আনার ফাংশন (ফলব্যাক সিস্টেমসহ)
-async function getMimResponse(userMessage) {
-    // ফিল্টার করে যেগুলোর জায়গায় রিয়েল কি দেওয়া হয়েছে সেগুলো সিলেক্ট করা
+// হাই-লেভেল স্মার্ট এপিআই রেসপন্স উইথ চ্যাট হিস্ট্রি (Multi-API Fallback)
+async function getMimSmartResponse(remoteJid, userMessage) {
     const validKeys = API_KEYS.filter(key => key && !key.startsWith("LALA_API_KEY"));
     
     if (validKeys.length === 0) {
         return "আরো একটু ব্যস্ত আছি ভাইয়া, মীম বলছি! লালা ভাই একটু পরে কথা বলবে।";
     }
 
+    // প্রতিটা ইউজারের জন্য আলাদা চ্যাট সেশন বা হিস্ট্রি মেইনটেইন করা
+    if (!chatSessions.has(remoteJid)) {
+        chatSessions.set(remoteJid, []);
+    }
+    const history = chatSessions.get(remoteJid);
+
+    // ইউজারের নতুন মেসেজ হিস্টরিতে যোগ করা
+    history.push({ role: 'user', parts: [{ text: userMessage }] });
+
     for (let i = 0; i < validKeys.length; i++) {
         try {
             const ai = new GoogleGenAI({ apiKey: validKeys[i] });
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: [
-                    { role: 'user', parts: [{ text: MIM_SYSTEM_PROMPT + "\n\n ইউজারের মেসেজ: " + userMessage }] }
-                ]
-            });
             
-            if (response && response.text) {
-                return response.text;
+            // চ্যাট মডেল ব্যবহার করে আগের কথপোকথনের ধারাবাহিকতা বজায় রাখা
+            const chat = ai.chats.create({
+                model: 'gemini-2.5-flash',
+                config: {
+                    systemInstruction: MIM_SYSTEM_PROMPT,
+                },
+                history: history.slice(0, -1) // আগের সব হিস্ট্রি পাঠানো হচ্ছে যাতে বট কন্টেক্সট মনে রাখে
+            });
+
+            const result = await chat.sendMessage({ message: userMessage });
+            const responseText = result.text;
+            
+            if (responseText) {
+                // বটের উত্তরও হিস্টরিতে সেভ করে রাখা
+                history.push({ role: 'model', parts: [{ text: responseText }] });
+                
+                // মেমোরি যেন খুব বেশি ভারী না হয়ে যায়, তাই শেষ ২০টি মেসেজ সেভ রাখবে
+                if (history.length > 20) {
+                    history.shift();
+                }
+
+                return responseText;
             }
         } catch (error) {
-            console.log(`API Key ${i + 1} failed, trying next one...`);
-            // যদি একটি এপিআই ফেইল করে বা লিমিট শেষ হয়, তবে লুপ ঘুরে পরের এপিআই ট্রাই করবে
+            console.log(`API Key ${i + 1} failed, switching to next key...`);
         }
     }
     
@@ -71,11 +91,9 @@ async function startBot() {
 
     sock.ev.on('creds.update', saveCreds);
 
-    // সিকিউরড কিউআর কোড জেনারেশন এবং ডিসপ্লে হ্যান্ডলার
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
 
-        // যদি টার্মাক্সে স্ক্যান করার জন্য কিউআর কোড আসে
         if (qr) {
             console.log('\nস্ক্যান করার জন্য কিউআর কোড নিচে দেওয়া হলো:');
             qrcode.generate(qr, { small: true });
@@ -96,11 +114,11 @@ async function startBot() {
         if (type !== 'notify') return;
 
         const msg = messages[0];
-        if (!msg.message || msg.key.fromMe) return; // নিজের মেসেজ পুরোপুরি ইগ্নোর করা হবে
+        if (!msg.message || msg.key.fromMe) return; 
 
         const remoteJid = msg.key.remoteJid;
 
-        // ১. গ্রুপ চ্যাট কঠোরভাবে ফিল্টার করে বাদ দেওয়া (শুধু পার্সোনাল ইনবক্সে কাজ করবে)
+        // গ্রুপ চ্যাট কঠোরভাবে ফিল্টার করে বাদ দেওয়া (শুধু পার্সোনাল ইনবক্সে কাজ করবে)
         if (remoteJid.endsWith('@g.us')) {
             return; 
         }
@@ -112,32 +130,27 @@ async function startBot() {
 
         console.log(`নতুন ইনবক্স মেসেজ পাওয়া গেছে [${remoteJid}]: ${messageContent}`);
 
-        // যদি ওই ইউজার থেকে ইতিমধ্যে একটি টাইমার রানিং থাকে, সেটি ক্লিয়ার করে দেওয়া (নতুন মেসেজের জন্য রিসেট)
+        // যদি ওই ইউজার থেকে ইতিমধ্যে একটি টাইমার রানিং থাকে, সেটি ক্লিয়ার করে দেওয়া
         if (activeTimers.has(remoteJid)) {
             clearTimeout(activeTimers.get(remoteJid));
         }
 
-        // ২. হিউম্যান ডিলে লজিক: ৪০ থেকে ৬০ সেকেন্ডের র্যান্ডম ডিলে তৈরি করা
-        const randomDelay = Math.floor(Math.random() * (60000 - 40000 + 1)) + 40000; // ৪০ থেকে ৬০ সেকেন্ড
+        // হিউম্যান ডিলে লজিক: ৪০ থেকে ৬০ সেকেন্ডের র্যান্ডম ডিলে তৈরি করা
+        const randomDelay = Math.floor(Math.random() * (60000 - 40000 + 1)) + 40000;
 
         const timer = setTimeout(async () => {
             try {
-                // টাইমার শেষ হওয়ার আগে আপনি নিজে ওই চ্যাটে রিপ্লাই দিয়েছেন কি না তা চেক করার জন্য সেশন ভেরিফিকেশন
-                // (যদি ইউজার নিজে চ্যাটে থাকে তবে এটি বাইপাস হবে)
+                console.log(`ডিলে শেষ হয়েছে। মীম (Mim) স্মার্ট উত্তর তৈরি করছে...`);
                 
-                console.log(`ডিলে শেষ হয়েছে। মীম (Mim) উত্তর তৈরি করছে...`);
-                
-                // টাইপিং স্ট্যাটাস অন করা যাতে রিয়েল মানুষের মতো দেখায়
                 await sock.sendPresenceUpdate('composing', remoteJid);
 
-                // এপিআই থেকে মিমের উত্তর জেনারেট করা
-                const replyText = await getMimResponse(messageContent);
+                // হাই-লেভেল স্মার্ট রেসপন্স জেনারেট করা
+                const replyText = await getMimSmartResponse(remoteJid, messageContent);
 
-                // ছোট কৃত্রিম টাইপিং বিরতি দিয়ে মেসেজ সেন্ড করা
                 await new Promise(resolve => setTimeout(resolve, 3000));
 
                 await sock.sendMessage(remoteJid, { text: replyText });
-                console.log(`অটো-রিপ্লাই সফলভাবে পাঠানো হয়েছে.`);
+                console.log(`স্মার্ট অটো-রিপ্লাই সফলভাবে পাঠানো হয়েছে.`);
                 
             } catch (err) {
                 console.error('অটো-রিপ্লাই পাঠাতে সমস্যা হয়েছে:', err);
