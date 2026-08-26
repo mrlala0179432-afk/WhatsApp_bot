@@ -1,7 +1,7 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
-const axios = require('axios');
+const { GoogleGenAI } = require('@google/genai');
 
 const colors = {
     reset: "\x1b[0m",
@@ -20,8 +20,8 @@ function printBanner() {
     console.log("==================================================" + colors.reset);
 }
 
-// 👉 আপনার দেওয়া নতুন আপডেটকৃত 'AQ.' এপিআই টোকেন এখানে বসানো হলো
-const API_TOKEN = "AQ.Ab8RN6LpwUavxYRSrJL24315kYt4PlrQFhR_bbi0D1z9eHhE4g"; 
+// 👉 আপনার নতুন AQ ফরম্যাটের এপিআই কি এখানে সঠিকভাবে ইনিশিয়ালাইজ করা হলো
+const ai = new GoogleGenAI({ apiKey: "AQ.Ab8RN6LpwUavxYRSrJL24315kYt4PlrQFhR_bbi0D1z9eHhE4g" });
 
 const MIM_SYSTEM_PROMPT = `
 তুমি হলে 'মিম' (Mim), লালার পার্সোনাল অ্যাসিস্টেন্ট। তুমি খুব চতুর, বন্ধুসুলভ এবং স্মার্ট মেয়ে। 
@@ -32,36 +32,26 @@ const activeTimers = new Map();
 
 async function getMimResponse(userMessage) {
     try {
-        // গুগল জেমিনির লেটেস্ট বেস ইউআরএল এবং অথেন্টিকেশন হেডার কনফিগারেশন
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
-        
-        const response = await axios.post(url, {
+        // নতুন এসডিকে দিয়ে জেমিনির লেটেস্ট মডেল কল
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.0-flash',
             contents: [
                 {
-                    parts: [
-                        { text: MIM_SYSTEM_PROMPT + "\n\nইউজারের মেসেজ: " + userMessage }
-                    ]
+                    role: 'user',
+                    parts: [{ text: MIM_SYSTEM_PROMPT + "\n\nইউজারের মেসেজ: " + userMessage }]
                 }
             ]
-        }, {
-            headers: {
-                'Authorization': `Bearer ${API_TOKEN}`,
-                'Content-Type': 'application/json'
-            }
         });
 
-        if (response.data && 
-            response.data.candidates && 
-            response.data.candidates[0].content && 
-            response.data.candidates[0].content.parts[0].text) {
-            return response.data.candidates[0].content.parts[0].text.trim();
+        if (response && response.text) {
+            return response.text.trim();
+        } else {
+            throw new Error("এপিআই থেকে কোনো টেক্সট রেসপন্স পাওয়া যায়নি।");
         }
     } catch (error) {
-        console.error(colors.red + `❌ API Error:` + colors.reset, error.response?.data?.error?.message || error.message);
+        console.error(colors.red + `❌ API Error:` + colors.reset, error.message);
         throw error;
     }
-    
-    throw new Error("এপিআই থেকে কোনো রেসপন্স পাওয়া যায়নি।");
 }
 
 async function startBot() {
@@ -98,7 +88,7 @@ async function startBot() {
     sock.ev.on('messages.upsert', async ({ messages, type }) => {
         if (type !== 'notify') return;
 
-        const msg = messages.messages ? messages.messages[0] : messages[0];
+        const msg = messages[0];
         if (!msg.message || msg.key.fromMe) return; 
 
         const remoteJid = msg.key.remoteJid;
