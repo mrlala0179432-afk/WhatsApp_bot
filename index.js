@@ -5,14 +5,16 @@ const qrcode = require('qrcode-terminal');
 
 // ==========================================
 // কনফিগারেশন এবং মাল্টিপল এপিআই কি (API Keys)
+// আপনার দেওয়া নতুন কি এবং আগের কি গুলো এখানে সেট করা হলো
 // ==========================================
 const API_KEYS = [
     "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY", // প্রথম এপিআই কি
-    "LALA_API_KEY_2", // দ্বিতীয় এপিআই কি (অপশনাল)
-    "LALA_API_KEY_3"  // তৃতীয় এপিআই কি (অপশনাল)
+    // আপনার দেওয়া অতিরিক্ত টোকেন/কি গুলো এখানে যোগ করে নিতে পারেন:
+    // "AQ.Ab8RN6K3puiUcAufBBJDj79VZw_55Cbo_84SRJvjBXVfY_UFTw",
+    // "AQ.Ab8RN6KgyDlEb1HUDSJJrjc2es_5lDz-quRdReIoFi6QEybjEw"
 ];
 
-// মিম (Mim) চরিত্রের স্মার্ট সিস্টেম প্রম্পট
+// মিম (Mim) চরিত্রের সর্বোচ্চ হাই-লেভেল স্মার্ট সিস্টেম প্রম্পট
 const MIM_SYSTEM_PROMPT = `
 তুমি হলে 'মিম' (Mim), লালার (Lala) পার্সোনাল অ্যাসিস্টেন্ট। তুমি একজন চতুর, বন্ধুসুলভ, বিনয়ী এবং স্মার্ট মেয়ে। 
 বর্তমানে লালা তার বিভিন্ন ব্যক্তিগত কাজ, কোডিং প্রজেক্ট এবং ব্যস্ততার কারণে ইনবক্সে সরাসরি সময় দিতে পারছে না, তাই তুমি তার হয়ে ইনবক্ষ সামলাচ্ছো।
@@ -28,12 +30,12 @@ const MIM_SYSTEM_PROMPT = `
 // একটিভ চ্যাট বা টাইমার ট্র্যাক করার জন্য মেমোরি ম্যাপ
 const activeTimers = new Map();
 
-// সরাসরি এবং ক্লিন এপিআই রেসপন্স ফাংশন (ফলব্যাক ফিক্সড)
+// সরাসরি এবং ক্লিন এপিআই রেসপন্স ফাংশন (ডিবাগিং ও এরর থ্রোয়িং সহ)
 async function getMimResponse(userMessage) {
     const validKeys = API_KEYS.filter(key => key && !key.startsWith("LALA_API_KEY"));
     
     if (validKeys.length === 0) {
-        return "আরো একটু ব্যস্ত আছি ভাইয়া, মীম বলছি!";
+        throw new Error("কোনো ভ্যালিড এপিআই কি (API Key) পাওয়া যায়নি!");
     }
 
     for (let i = 0; i < validKeys.length; i++) {
@@ -58,12 +60,15 @@ async function getMimResponse(userMessage) {
                 return response.text.trim();
             }
         } catch (error) {
-            console.log(`API Key ${i + 1} error:`, error.message);
+            console.error(`❌ API Key ${i + 1} Error:`, error.message);
+            // যদি শেষ কি তে এসেও ফেইল করে, তবে এররটি সামনের দিকে থ্রো করবে
+            if (i === validKeys.length - 1) {
+                throw error;
+            }
         }
     }
     
-    // যদি এপিআই লিমিট শেষ হয় বা কানেকশনে সমস্যা হয়
-    return "ভাইয়া, মীম বলছি! উনি এখন একটু কোডিং বা কাজে ব্যস্ত আছেন, একটু পরে আপনাকে নক করবে বলেছেন।";
+    throw new Error("সকল এপিআই কি (API Keys) কাজ করতে ব্যর্থ হয়েছে।");
 }
 
 async function startBot() {
@@ -136,8 +141,9 @@ async function startBot() {
                 await sock.sendMessage(remoteJid, { text: replyText });
                 console.log(`অটো-রিপ্লাই সফলভাবে পাঠানো হয়েছে.`);
                 
-            } METHODS_ERR => {
-                console.error('অটো-রিপ্লাই পাঠাতে সমস্যা হয়েছে:', METHODS_ERR);
+            } catch (error) {
+                // এখন থেকে এপিআই বা অন্য কোনো সমস্যা হলে ফলব্যাক টেক্সট না পাঠিয়ে সরাসরি টার্মাক্সে আসল এরর দেখাবে
+                console.error('❌ অটো-রিপ্লাই পাঠাতে গিয়ে সমস্যা হয়েছে (Error Details):', error.message || error);
             } finally {
                 activeTimers.delete(remoteJid);
             }
