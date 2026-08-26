@@ -65,8 +65,7 @@ async function startBot() {
 
     const sock = makeWASocket({
         auth: state,
-        printQRInTerminal: true,
-        logger: pino({ level: 'silent' })
+        logger: pino({ level: 'silent' }) // কিউআর কোডের অপ্রয়োজনীয় ক্র্যাশ বা ওয়ার্নিং এড়ানোর জন্য এটি ক্লিন করা হয়েছে
     });
 
     sock.ev.on('creds.update', saveCreds);
