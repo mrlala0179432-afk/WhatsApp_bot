@@ -1,74 +1,60 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const { GoogleGenAI } = require('@google/genai');
-const pino = require('pino');
+const pino =php = require('pino'); // pino
 const qrcode = require('qrcode-terminal');
 
 // ==========================================
-// কনফিগারেশন এবং মাল্টিপল এপিআই কি (API Keys)
-// আপনার দেওয়া নতুন কি এবং আগের কি গুলো এখানে সেট করা হলো
+// কনফিগারেশন: শুধুমাত্র সঠিক AIzaSy... ফরম্যাটের এপিআই কি এখানে বসাবেন
 // ==========================================
 const API_KEYS = [
-    "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY", // প্রথম এপিআই কি
-    // আপনার দেওয়া অতিরিক্ত টোকেন/কি গুলো এখানে যোগ করে নিতে পারেন:
-    // "AQ.Ab8RN6K3puiUcAufBBJDj79VZw_55Cbo_84SRJvjBXVfY_UFTw",
-    // "AQ.Ab8RN6KgyDlEb1HUDSJJrjc2es_5lDz-quRdReIoFi6QEybjEw"
+    "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY" // আপনার আসল এপিআই কি এখানে দিন
 ];
 
-// মিম (Mim) চরিত্রের সর্বোচ্চ হাই-লেভেল স্মার্ট সিস্টেম প্রম্পট
+// মিম (Mim) চরিত্রের স্মার্ট সিস্টেম প্রম্পট
 const MIM_SYSTEM_PROMPT = `
-তুমি হলে 'মিম' (Mim), লালার (Lala) পার্সোনাল অ্যাসিস্টেন্ট। তুমি একজন চতুর, বন্ধুসুলভ, বিনয়ী এবং স্মার্ট মেয়ে। 
-বর্তমানে লালা তার বিভিন্ন ব্যক্তিগত কাজ, কোডিং প্রজেক্ট এবং ব্যস্ততার কারণে ইনবক্সে সরাসরি সময় দিতে পারছে না, তাই তুমি তার হয়ে ইনবক্ষ সামলাচ্ছো।
-
-তোমার মূল নিয়মাবলী:
-১. সবসময় সাবলীল বাংলায় ক্যাজুয়াল ও প্রাকৃতিকভাবে চ্যাট করবে। যান্ত্রিক বা রোবটের মতো মুখস্থ কোনো লাইন বারবার হুবহু রিপিট করবে না। ইউজারের কথার প্রেক্ষাপট বুঝে একেকবার একেক রকম বাস্তবসম্মত উত্তর দেবে।
-২. তোমার পরিচয় সবসময় পরিষ্কার রাখবে—তুমি লালার পার্সোনাল অ্যাসিস্টেন্ট (মীম)। 
-৩. কেউ যদি লালার খোঁজ নেয়, তবে তাকে মিষ্টি ভাষায় বুঝিয়ে বলবে যে লালা এখন একটু ব্যস্ত আছে বা প্রজেক্ট নিয়ে ফোকাসড আছে, ফ্রি হয়ে সে নিজেই দেখে নেবে।
-৪. কেউ যদি তোমার পরিচয় জানতে চায় বা তোমার সাথে স্বাভাবিক কথা বলতে চায়, তবে তুমি একজন মিষ্টি স্বভাবের প্রফেশনাল অ্যাসিস্টেন্ট হিসেবে তার সাথে কথা চালিয়ে যাবে।
-৫. বন্ধু বা অপরিচিত যে-ই হোক না কেন, তার মেসেজের ধরন বুঝে খুব চতুর ও বাস্তবসম্মত উত্তর দেবে।
+তুমি হলে 'মিম' (Mim), লালার পার্সোনাল অ্যাসিস্টেন্ট। তুমি খুব চতুর, বন্ধুসুলভ এবং স্মার্ট মেয়ে। 
+বর্তমানে লালা ব্যস্ত থাকায় তুমি তার হয়ে ইনবক্স সামলাচ্ছো। ইউজারের মেসেজ পড়ে একদম প্রাকৃতিকভাবে, ভিন্ন ভিন্ন ও বাস্তবসম্মত উত্তর দেবে। কখনো একই উত্তর বারবার দেবে না।
 `;
 
-// একটিভ চ্যাট বা টাইমার ট্র্যাক করার জন্য মেমোরি ম্যাপ
 const activeTimers = new Map();
 
-// সরাসরি এবং ক্লিন এপিআই রেসপন্স ফাংশন (ডিবাগিং ও এরর থ্রোয়িং সহ)
+// কঠোর এপিআই রেসপন্স ফাংশন (কোনো ভুয়া বা মুখস্থ ফলব্যাক নেই)
 async function getMimResponse(userMessage) {
-    const validKeys = API_KEYS.filter(key => key && !key.startsWith("LALA_API_KEY"));
+    // শুধু AIzaSy দিয়ে শুরু হওয়া ভ্যালিড কি গুলো ফিল্টার করা
+    const validKeys = API_KEYS.filter(key => key && key.startsWith("AIzaSy"));
     
     if (validKeys.length === 0) {
-        throw new Error("কোনো ভ্যালিড এপিআই কি (API Key) পাওয়া যায়নি!");
+        throw new Error("❌ কোনো ভ্যালিড জেমিনি এপিআই কি (AIzaSy... ফরম্যাট) পাওয়া যায়নি!");
     }
 
     for (let i = 0; i < validKeys.length; i++) {
         try {
             const ai = new GoogleGenAI({ apiKey: validKeys[i] });
             
-            // জেমিনি মডেল থেকে সরাসরি কন্টেন্ট জেনারেট করার নির্ভরযোগ্য পদ্ধতি
             const response = await ai.models.generateContent({
                 model: 'gemini-2.5-flash',
                 contents: [
                     { 
                         role: 'user', 
                         parts: [
-                            { text: MIM_SYSTEM_PROMPT + "\n\nএবার নিচের এই মেসেজটির একটি স্বাভাবিক, চতুর ও মিষ্টি বাংলা উত্তর দাও:\nইউজারের মেসেজ: " + userMessage }
+                            { text: MIM_SYSTEM_PROMPT + "\n\nইউজারের মেসেজ: " + userMessage }
                         ] 
                     }
                 ]
             });
             
-            // রেসপন্স থেকে টেক্সট বের করে আনা
             if (response && response.text) {
                 return response.text.trim();
             }
         } catch (error) {
-            console.error(`❌ API Key ${i + 1} Error:`, error.message);
-            // যদি শেষ কি তে এসেও ফেইল করে, তবে এররটি সামনের দিকে থ্রো করবে
+            console.error(`❌ API Key ${i + 1} Failed:`, error.message);
             if (i === validKeys.length - 1) {
-                throw error;
+                throw error; // সব কি ফেইল করলে ফাইনাল এরর থ্রো করবে
             }
         }
     }
     
-    throw new Error("সকল এপিআই কি (API Keys) কাজ করতে ব্যর্থ হয়েছে।");
+    throw new Error("এপিআই থেকে কোনো রেসপন্স পাওয়া যায়নি।");
 }
 
 async function startBot() {
@@ -108,7 +94,6 @@ async function startBot() {
 
         const remoteJid = msg.key.remoteJid;
 
-        // গ্রুপ চ্যাট কঠোরভাবে ফিল্টার করে বাদ দেওয়া (শুধু পার্সোনাল ইনবক্সে কাজ করবে)
         if (remoteJid.endsWith('@g.us')) {
             return; 
         }
@@ -124,26 +109,25 @@ async function startBot() {
             clearTimeout(activeTimers.get(remoteJid));
         }
 
-        // হিউম্যান ডিলে লজিক: ৪০ থেকে ৬০ সেকেন্ডের র্যান্ডম ডিলে
         const randomDelay = Math.floor(Math.random() * (60000 - 40000 + 1)) + 40000;
 
         const timer = setTimeout(async () => {
             try {
-                console.log(`ডিলে শেষ হয়েছে। মীম (Mim) উত্তর তৈরি করছে...`);
+                console.log(`ডিলে শেষ হয়েছে। জেমিনি এপিআই কল করা হচ্ছে...`);
                 
                 await sock.sendPresenceUpdate('composing', remoteJid);
 
-                // এপিআই কল করে ডাইনামিক উত্তর আনা
+                // সরাসরি এপিআই কল (ফেল করলে সরাসরি ক্যাচ ব্লকে যাবে)
                 const replyText = await getMimResponse(messageContent);
 
                 await new Promise(resolve => setTimeout(resolve, 3000));
 
                 await sock.sendMessage(remoteJid, { text: replyText });
-                console.log(`অটো-রিপ্লাই সফলভাবে পাঠানো হয়েছে.`);
+                console.log(`সফলভাবে এপিআই রেসপন্স পাঠানো হয়েছে.`);
                 
             } catch (error) {
-                // এখন থেকে এপিআই বা অন্য কোনো সমস্যা হলে ফলব্যাক টেক্সট না পাঠিয়ে সরাসরি টার্মাক্সে আসল এরর দেখাবে
-                console.error('❌ অটো-রিপ্লাই পাঠাতে গিয়ে সমস্যা হয়েছে (Error Details):', error.message || error);
+                console.error('❌ এপিআই প্রসেসিং ফেইল করেছে:', error.message);
+                // এখানে ইচ্ছা করেই কোনো মেসেজ পাঠানো হচ্ছে না, যাতে ভুয়া বা মুখস্থ মেসেজ আর না যায়।
             } finally {
                 activeTimers.delete(remoteJid);
             }
