@@ -20,8 +20,8 @@ function printBanner() {
     console.log("==================================================" + colors.reset);
 }
 
-// আপনার এআই স্টুডিওর এপিআই কি
-const API_KEY = "AQ.Ab8RN6L4SwiXapZ8SXJuMJIxYTwj1AO4I2n_vy21yQiDvcOjKg";
+// এখানে আপনার আসল 'AIzaSy' দিয়ে শুরু হওয়া এপিআই কি বসাবেন
+const API_KEY = "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY"; 
 
 const MIM_SYSTEM_PROMPT = `
 তুমি হলে 'মিম' (Mim), লালার পার্সোনাল অ্যাসিস্টেন্ট। তুমি খুব চতুর, বন্ধুসুলভ এবং স্মার্ট মেয়ে। 
@@ -32,8 +32,8 @@ const activeTimers = new Map();
 
 async function getMimResponse(userMessage) {
     try {
-        // জেমিনির স্টবল জেনারেশন মডেল এন্ডপয়েন্ট
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+        // স্ট্যান্ডার্ড AIzaSy কি-এর জন্য জেমিনি v1beta এন্ডপয়েন্ট
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
         
         const response = await axios.post(url, {
             contents: [
