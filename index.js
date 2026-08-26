@@ -48,8 +48,9 @@ async function getMimResponse(userMessage) {
         try {
             const ai = new GoogleGenAI({ apiKey: validKeys[i] });
             
+            // গুগল সার্ভারের রিকোয়ারমেন্ট অনুযায়ী সঠিক লেটেস্ট মডেল নাম
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-2.0-flash',
                 contents: [
                     { 
                         role: 'user', 
@@ -75,7 +76,6 @@ async function getMimResponse(userMessage) {
 }
 
 async function startBot() {
-    // টার্মিনালে কালারফুল ব্যানার প্রিন্ট হবে
     printBanner();
 
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
