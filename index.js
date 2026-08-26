@@ -20,12 +20,8 @@ function printBanner() {
     console.log("==================================================" + colors.reset);
 }
 
-// ==========================================
-// আপনার এআই স্টুডিওর নতুন এপিআই কি এখানে বসানো হলো
-// ==========================================
-const API_KEYS = [
-    "AQ.Ab8RN6L4SwiXapZ8SXJuMJIxYTwj1AO4I2n_vy21yQiDvcOjKg"
-];
+// আপনার এআই স্টুডিওর এপিআই কি
+const API_KEY = "AQ.Ab8RN6L4SwiXapZ8SXJuMJIxYTwj1AO4I2n_vy21yQiDvcOjKg";
 
 const MIM_SYSTEM_PROMPT = `
 তুমি হলে 'মিম' (Mim), লালার পার্সোনাল অ্যাসিস্টেন্ট। তুমি খুব চতুর, বন্ধুসুলভ এবং স্মার্ট মেয়ে। 
@@ -35,38 +31,29 @@ const MIM_SYSTEM_PROMPT = `
 const activeTimers = new Map();
 
 async function getMimResponse(userMessage) {
-    if (API_KEYS.length === 0) {
-        throw new Error("❌ কোনো এপিআই কি পাওয়া যায়নি!");
-    }
+    try {
+        // জেমিনির স্টবল জেনারেশন মডেল এন্ডপয়েন্ট
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+        
+        const response = await axios.post(url, {
+            contents: [
+                {
+                    parts: [
+                        { text: MIM_SYSTEM_PROMPT + "\n\nইউজারের মেসেজ: " + userMessage }
+                    ]
+                }
+            ]
+        });
 
-    for (let i = 0; i < API_KEYS.length; i++) {
-        try {
-            const apiKey = API_KEYS[i];
-            // জেমিনির লেটেস্ট জেনারেশন মডেল এন্ডপয়েন্ট (v1beta)
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            
-            const response = await axios.post(url, {
-                contents: [
-                    {
-                        parts: [
-                            { text: MIM_SYSTEM_PROMPT + "\n\nইউজারের মেসেজ: " + userMessage }
-                        ]
-                    }
-                ]
-            });
-
-            if (response.data && 
-                response.data.candidates && 
-                response.data.candidates[0].content && 
-                response.data.candidates[0].content.parts[0].text) {
-                return response.data.candidates[0].content.parts[0].text.trim();
-            }
-        } catch (error) {
-            console.error(colors.red + `❌ API Key ${i + 1} Failed:` + colors.reset, error.response?.data?.error?.message || error.message);
-            if (i === API_KEYS.length - 1) {
-                throw error;
-            }
+        if (response.data && 
+            response.data.candidates && 
+            response.data.candidates[0].content && 
+            response.data.candidates[0].content.parts[0].text) {
+            return response.data.candidates[0].content.parts[0].text.trim();
         }
+    } catch (error) {
+        console.error(colors.red + `❌ API Error:` + colors.reset, error.response?.data?.error?.message || error.message);
+        throw error;
     }
     
     throw new Error("এপিআই থেকে কোনো রেসপন্স পাওয়া যায়নি।");
@@ -142,7 +129,7 @@ async function startBot() {
                 console.log(colors.green + `✅ সফলভাবে এপিআই রেসপন্স পাঠানো হয়েছে.` + colors.reset);
                 
             } catch (error) {
-                console.error(colors.red + '❌ এপিআই প্রসেসিং ফেইল করেছে:', error.message + colors.reset);
+                console.error(colors.red + '❌ প্রসেসিং ফেইল করেছে:', error.message + colors.reset);
             } finally {
                 activeTimers.delete(remoteJid);
             }
