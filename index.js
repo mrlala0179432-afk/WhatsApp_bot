@@ -1,6 +1,16 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const { GoogleGenAI } = require('@google/genai');
 const pino = require('pino');
+const readline = require('readline');
+
+// টার্মাক্স থেকে নম্বর ইনপুট নেওয়ার রিডলাইন সেটআপ
+const question = (query) => {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    return new Promise(resolve => rl.question(query, ans => {
+        rl.close();
+        resolve(ans);
+    }));
+};
 
 // ==========================================
 // কনফিগারেশন এবং মাল্টিপল এপিআই কি (API Keys)
@@ -65,8 +75,24 @@ async function startBot() {
 
     const sock = makeWASocket({
         auth: state,
-        logger: pino({ level: 'silent' }) // কিউআর কোডের অপ্রয়োজনীয় ক্র্যাশ বা ওয়ার্নিং এড়ানোর জন্য এটি ক্লিন করা হয়েছে
+        logger: pino({ level: 'silent' })
     });
+
+    // পেয়ারিং কোড লজিক: এক ফোনে বট চালিয়ে অন্য ফোন বা নিজের হোয়াটসঅ্যাপ নম্বর দিয়ে কানেক্ট করার জন্য
+    if (!sock.authState.creds.registered) {
+        console.log('\n--- হোয়াটসঅ্যাপ পেয়ারিং সিস্টেম ---');
+        const phoneNumber = await question('আপনার হোয়াটসঅ্যাপ নম্বরটি দিন (কান্ট্রি কোড সহ, যেমন: 88017XXXXXXXX): ');
+        
+        try {
+            const code = await sock.requestPairingCode(phoneNumber.trim());
+            console.log(`\n========================================`);
+            console.log(`আপনার পেয়ারিং কোডটি হলো: ${code}`);
+            console.log(`========================================\n`);
+            console.log('আপনার হোয়াটসঅ্যাপ অ্যাপে গিয়ে Linked Devices > Link a Device > Link with phone number instead অপশনে এই কোডটি বসিয়ে দিন।\n');
+        } catch (err) {
+            console.error('পেয়ারিং কোড জেনারেট করতে সমস্যা হয়েছে:', err);
+        }
+    }
 
     sock.ev.on('creds.update', saveCreds);
 
