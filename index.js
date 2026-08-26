@@ -1,38 +1,37 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const { GoogleGenAI } = require('@google/genai');
-const pino =php = require('pino'); // pino
+const pino = require('pino');
 const qrcode = require('qrcode-terminal');
 
 // ==========================================
-// কনফিগারেশন: শুধুমাত্র সঠিক AIzaSy... ফরম্যাটের এপিআই কি এখানে বসাবেন
+// কনফিগারেশন এবং এপিআই কি
 // ==========================================
 const API_KEYS = [
-    "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY" // আপনার আসল এপিআই কি এখানে দিন
+    "AIzaSyCT2h8JLHzjT5W0vVQ-51Nfuu4wtXkM3SY" // আপনার আসল এপিআই কি
 ];
 
 // মিম (Mim) চরিত্রের স্মার্ট সিস্টেম প্রম্পট
 const MIM_SYSTEM_PROMPT = `
 তুমি হলে 'মিম' (Mim), লালার পার্সোনাল অ্যাসিস্টেন্ট। তুমি খুব চতুর, বন্ধুসুলভ এবং স্মার্ট মেয়ে। 
-বর্তমানে লালা ব্যস্ত থাকায় তুমি তার হয়ে ইনবক্স সামলাচ্ছো। ইউজারের মেসেজ পড়ে একদম প্রাকৃতিকভাবে, ভিন্ন ভিন্ন ও বাস্তবসম্মত উত্তর দেবে। কখনো একই উত্তর বারবার দেবে না।
+বর্তমানে লালা ব্যস্ত থাকায় তুমি তার হয়ে ইনবক্স সামলাচ্ছো। ইউজারের মেসেজ পড়ে একদম প্রাকৃতিকভাবে, ভিন্ন ভিন্ন ও বাস্তবসম্মত উত্তর দেবে।
 `;
 
 const activeTimers = new Map();
 
-// কঠোর এপিআই রেসপন্স ফাংশন (কোনো ভুয়া বা মুখস্থ ফলব্যাক নেই)
 async function getMimResponse(userMessage) {
-    // শুধু AIzaSy দিয়ে শুরু হওয়া ভ্যালিড কি গুলো ফিল্টার করা
     const validKeys = API_KEYS.filter(key => key && key.startsWith("AIzaSy"));
     
     if (validKeys.length === 0) {
-        throw new Error("❌ কোনো ভ্যালিড জেমিনি এপিআই কি (AIzaSy... ফরম্যাট) পাওয়া যায়নি!");
+        throw new Error("❌ কোনো ভ্যালিড জেমিনি এপিআই কি পাওয়া যায়নি!");
     }
 
     for (let i = 0; i < validKeys.length; i++) {
         try {
             const ai = new GoogleGenAI({ apiKey: validKeys[i] });
             
+            // এখানে মডেলের নাম gemini-1.5-flash করা হয়েছে যা বর্তমান এপিআই তে ফুল সাপোর্ট করে
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-1.5-flash',
                 contents: [
                     { 
                         role: 'user', 
@@ -49,7 +48,7 @@ async function getMimResponse(userMessage) {
         } catch (error) {
             console.error(`❌ API Key ${i + 1} Failed:`, error.message);
             if (i === validKeys.length - 1) {
-                throw error; // সব কি ফেইল করলে ফাইনাল এরর থ্রো করবে
+                throw error;
             }
         }
     }
@@ -117,7 +116,6 @@ async function startBot() {
                 
                 await sock.sendPresenceUpdate('composing', remoteJid);
 
-                // সরাসরি এপিআই কল (ফেল করলে সরাসরি ক্যাচ ব্লকে যাবে)
                 const replyText = await getMimResponse(messageContent);
 
                 await new Promise(resolve => setTimeout(resolve, 3000));
@@ -127,7 +125,6 @@ async function startBot() {
                 
             } catch (error) {
                 console.error('❌ এপিআই প্রসেসিং ফেইল করেছে:', error.message);
-                // এখানে ইচ্ছা করেই কোনো মেসেজ পাঠানো হচ্ছে না, যাতে ভুয়া বা মুখস্থ মেসেজ আর না যায়।
             } finally {
                 activeTimers.delete(remoteJid);
             }
