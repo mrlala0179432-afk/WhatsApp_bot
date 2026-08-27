@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LALADIGITAL - Pro App & Game Hub</title>
+    <title>LALA DIGITAL - Pro App & Game Hub</title>
     
-    <!-- ======================================================== -->
-    <!-- 🌐 ১. ব্রাউজার ট্যাবের লোগো (Favicon) -->
-    <!-- ======================================================== -->
+    <!-- 🌐 ব্রাউজার ট্যাবের লোগো -->
     <link rel="icon" type="image/jpeg" href="tiktok_pic.jpg">
 
     <!-- Tailwind CSS CDN -->
@@ -36,115 +34,290 @@
         .social-btn-3d:active {
             transform: translateY(2px);
         }
+        .banner-3d {
+            box-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.4), 0 0 15px rgba(168, 85, 247, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .banner-3d:hover {
+            transform: scale(1.01);
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
 
-    <!-- Navbar -->
-    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            
-            <!-- Logo & Title -->
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 overflow-hidden border border-indigo-500/30">
-                    <img src="tiktok_pic.jpg" alt="Logo" class="w-full h-full object-cover">
-                </div>
-                <span class="text-xl md:text-2xl font-black tracking-wider bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">LALADIGITAL</span>
-            </div>
-            
-            <!-- ======================================================== -->
-            <!-- 🌐 ২. সোশ্যাল মিডিয়া বাটনসমূহ (আপনার দেওয়া লিংক সহ) -->
-            <!-- ======================================================== -->
-            <div class="flex items-center space-x-2">
+    <div>
+        <!-- Navbar -->
+        <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 
-                <!-- 📺 [ইউটিউব চ্যানেল বাটন] -->
-                <a href="https://youtube.com/@lalagamer100?si=ux3pOxs5lVMtoIgl" target="_blank" class="social-btn-3d bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
-                    <i class="fa-brands fa-youtube text-sm"></i>
-                    <span class="hidden md:inline">YouTube</span>
-                </a>
-
-                <!-- ✈️ [টেলিগ্রাম চ্যানেল বাটন] -->
-                <a href="https://t.me/toplalabd" target="_blank" class="social-btn-3d bg-sky-500 hover:bg-sky-400 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
-                    <i class="fa-brands fa-telegram text-sm"></i>
-                    <span class="hidden md:inline">Telegram</span>
-                </a>
-
-                <!-- 🎵 [টিকটক আইডি ১ বাটন] -->
-                <a href="https://tiktok.com/@lalagamer10k" target="_blank" class="social-btn-3d bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
-                    <i class="fa-brands fa-tiktok text-sm text-pink-500"></i>
-                    <span class="hidden md:inline">TikTok 1</span>
-                </a>
-
-                <!-- 🎵 [টিকটক আইডি ২ বাটন] -->
-                <a href="https://tiktok.com/@rdx_lala1" target="_blank" class="social-btn-3d bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
-                    <i class="fa-brands fa-tiktok text-sm text-cyan-400"></i>
-                    <span class="hidden md:inline">TikTok 2</span>
-                </a>
-
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero Banner Section -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
-        <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 p-8 md:p-12 border border-indigo-500/20 shadow-2xl">
-            <div class="relative z-10 max-w-xl">
-                <span class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/30">⚡ LALADIGITAL HUB</span>
-                <h1 class="text-3xl md:text-5xl font-extrabold mt-4 tracking-tight leading-tight">Ultimate 3D Games & Premium Apps Hub</h1>
-                <p class="text-slate-300 mt-3 text-sm md:text-base">Download the safest, high-speed, modified and original android apps and games with a single click.</p>
-                <div class="mt-6 flex space-x-4">
-                    <button class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl btn-3d flex items-center space-x-2">
-                        <i class="fa-solid fa-rocket"></i>
-                        <span>Explore Top Apps</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Popular Apps Section -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold flex items-center space-x-2">
-                <span class="text-amber-400">🔥</span>
-                <span>Popular Apps & Games</span>
-            </h2>
-        </div>
-
-        <!-- Apps Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            
-            <!-- ======================================================== -->
-            <!-- 📱 কার্ড ১ (Card 1): Shizuku apk (আপনার দেওয়া তথ্য অনুযায়ী) -->
-            <!-- ======================================================== -->
-            <div class="app-card bg-slate-800/80 backdrop-blur border border-slate-700/60 rounded-2xl p-4 flex flex-col items-center text-center relative group">
-                <span class="absolute top-3 right-3 bg-amber-500/20 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-md">Popular</span>
-                
-                <!-- অ্যাপসের লোগো ছবি (Shizuku.png) -->
-                <img src="Shizuku.png" alt="Shizuku apk" class="w-16 h-16 rounded-2xl shadow-md mb-3 group-hover:scale-105 transition object-cover bg-slate-700">
-                
-                <!-- অ্যাপসের নাম -->
-                <h3 class="font-bold text-sm text-slate-200 truncate w-full">Shizuku apk</h3>
-                <span class="text-[11px] text-slate-400 mt-0.5">Tools</span>
-                <div class="w-full mt-4 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-700/50 pt-2">
-                    <span><i class="fa-solid fa-hard-drive text-indigo-400"></i> 15 MB</span>
-                    <span><i class="fa-solid fa-code-branch text-emerald-400"></i> v13.5</span>
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 overflow-hidden border border-indigo-500/30">
+                        <img src="tiktok_pic.jpg" alt="Logo" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-xl md:text-2xl font-black tracking-wider bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">LALADIGITAL</span>
                 </div>
                 
-                <!-- অ্যাপসের ডাউনলোড লিংক (https://t.me/toplalabd/89) -->
-                <a href="https://t.me/toplalabd/89" target="_blank" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 rounded-xl btn-3d flex items-center justify-center space-x-1">
-                    <i class="fa-solid fa-download"></i>
-                    <span>Download</span>
-                </a>
+                <!-- Social Media Buttons -->
+                <div class="flex items-center space-x-2">
+                    <a href="https://youtube.com/@lalagamer100?si=ux3pOxs5lVMtoIgl" target="_blank" class="social-btn-3d bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
+                        <i class="fa-brands fa-youtube text-sm"></i>
+                        <span class="hidden md:inline">YouTube</span>
+                    </a>
+                    <a href="https://t.me/toplalabd" target="_blank" class="social-btn-3d bg-sky-500 hover:bg-sky-400 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
+                        <i class="fa-brands fa-telegram text-sm"></i>
+                        <span class="hidden md:inline">Telegram</span>
+                    </a>
+                    <a href="https://tiktok.com/@lalagamer10k" target="_blank" class="social-btn-3d bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
+                        <i class="fa-brands fa-tiktok text-sm text-pink-500"></i>
+                        <span class="hidden md:inline">TikTok 1</span>
+                    </a>
+                    <a href="https://tiktok.com/@rdx_lala1" target="_blank" class="social-btn-3d bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
+                        <i class="fa-brands fa-tiktok text-sm text-cyan-400"></i>
+                        <span class="hidden md:inline">TikTok 2</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- 3D Banner Section (Banner.png) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+            <div class="banner-3d rounded-3xl overflow-hidden border border-indigo-500/30 bg-slate-800">
+                <img src="Banner.png" alt="Featured Banner" class="w-full h-48 md:h-80 object-cover">
+            </div>
+        </section>
+
+        <!-- Popular Apps Section -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center space-x-2">
+                    <span class="text-amber-400">🔥</span>
+                    <span>Popular Apps & Games</span>
+                </h2>
             </div>
 
-        </div>
-    </main>
+            <!-- Dynamic Apps Grid Container -->
+            <div id="appsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <!-- Cards will load automatically via JavaScript -->
+            </div>
+        </main>
+    </div>
 
-    <!-- Footer -->
-    <footer class="bg-slate-950 border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 LALADIGITAL. All rights reserved.</p>
+    <!-- Footer with Secret Admin Trigger -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500 relative">
+        <p>&copy; 2026 LALADIGITAL. All rights reserved. 
+           <button onclick="openAdminPanel()" class="text-slate-700 hover:text-slate-500 ml-2">⚙️</button>
+        </p>
     </footer>
 
+    <!-- Advanced Admin Panel Modal with Public Cards Manager & Edit/Delete Support -->
+    <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 w-full max-w-2xl shadow-2xl relative my-8">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+                <h3 class="text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-shield-halved text-indigo-400"></i>
+                    <span>Admin Panel & Public List Manager</span>
+                </h3>
+                <button onclick="closeAdminPanel()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Card Add / Edit Form -->
+            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-700/50 mb-6">
+                <h4 id="formTitle" class="text-sm font-bold text-indigo-400 mb-3">➕ Add New App Card</h4>
+                <input type="hidden" id="editIndex" value="-1">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">App Name</label>
+                        <input type="text" id="appName" placeholder="e.g. Shizuku apk" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Category</label>
+                            <input type="text" id="appCategory" placeholder="Tools / Action" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Size</label>
+                            <input type="text" id="appSize" placeholder="15 MB" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Image Filename</label>
+                        <input type="text" id="appImage" placeholder="Shizuku.png" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Download Direct Link</label>
+                        <input type="text" id="appLink" placeholder="https://t.me/..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                    </div>
+                    <div class="flex space-x-2 pt-2">
+                        <button onclick="saveCard()" id="saveBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl btn-3d text-sm">
+                            Publish App Card
+                        </button>
+                        <button onclick="resetForm()" id="cancelEditBtn" class="hidden bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 px-4 rounded-xl text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Public Cards Management List -->
+            <div>
+                <h4 class="text-sm font-bold text-slate-300 mb-3 flex items-center space-x-1">
+                    <i class="fa-solid fa-list-check text-emerald-400"></i>
+                    <span>Manage Public Cards List</span>
+                </h4>
+                <div id="adminCardsList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Dynamic list items will show here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Admin Management & LocalStorage Persistence -->
+    <script>
+        // Initial Default Data (Shizuku apk)
+        let appsData = JSON.parse(localStorage.getItem('lalaji_apps')) || [
+            {
+                name: "Shizuku apk",
+                category: "Tools",
+                size: "15 MB",
+                image: "Shizuku.png",
+                link: "https://t.me/toplalabd/89"
+            }
+        ];
+
+        function renderApps() {
+            let grid = document.getElementById('appsGrid');
+            let adminList = document.getElementById('adminCardsList');
+            
+            grid.innerHTML = '';
+            adminList.innerHTML = '';
+
+            appsData.forEach((app, index) => {
+                // 1. Render Public Website Card
+                grid.innerHTML += `
+                    <div class="app-card bg-slate-800/80 backdrop-blur border border-slate-700/60 rounded-2xl p-4 flex flex-col items-center text-center relative group">
+                        <span class="absolute top-3 right-3 bg-amber-500/20 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-md">Live</span>
+                        <img src="${app.image}" alt="${app.name}" class="w-16 h-16 rounded-2xl shadow-md mb-3 group-hover:scale-105 transition object-cover bg-slate-700">
+                        <h3 class="font-bold text-sm text-slate-200 truncate w-full">${app.name}</h3>
+                        <span class="text-[11px] text-slate-400 mt-0.5">${app.category}</span>
+                        <div class="w-full mt-4 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-700/50 pt-2">
+                            <span><i class="fa-solid fa-hard-drive text-indigo-400"></i> ${app.size}</span>
+                            <span><i class="fa-solid fa-code-branch text-emerald-400"></i> v1.0</span>
+                        </div>
+                        <a href="${app.link}" target="_blank" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 rounded-xl btn-3d flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Download</span>
+                        </a>
+                    </div>
+                `;
+
+                // 2. Render Admin Public Control List
+                adminList.innerHTML += `
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-700/80 p-2.5 rounded-xl text-xs">
+                        <div class="flex items-center space-x-3 overflow-hidden">
+                            <img src="${app.image}" class="w-8 h-8 rounded-lg object-cover bg-slate-800">
+                            <div class="truncate">
+                                <p class="font-bold text-white truncate">${app.name}</p>
+                                <p class="text-[10px] text-slate-400 truncate">${app.link}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1.5 flex-shrink-0">
+                            <button onclick="editCard(${index})" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 px-2.5 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button onclick="deleteCard(${index})" class="bg-red-600/20 text-red-400 hover:bg-red-600/30 px-2.5 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            localStorage.setItem('lalaji_apps', JSON.stringify(appsData));
+        }
+
+        function openAdminPanel() {
+            let pass = prompt("Enter Admin Password:");
+            if (pass === "lala999") {
+                document.getElementById('adminModal').classList.remove('hidden');
+                renderApps();
+            } else if (pass !== null) {
+                alert("Wrong Password!");
+            }
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminModal').classList.add('hidden');
+            resetForm();
+        }
+
+        function saveCard() {
+            let index = document.getElementById('editIndex').value;
+            let name = document.getElementById('appName').value;
+            let category = document.getElementById('appCategory').value || "Apps";
+            let size = document.getElementById('appSize').value || "30 MB";
+            let image = document.getElementById('appImage').value || "Shizuku.png";
+            let link = document.getElementById('appLink').value || "#";
+
+            if (!name) {
+                alert("Please enter app name!");
+                return;
+            }
+
+            let cardData = { name, category, size, image, link };
+
+            if (index === "-1") {
+                // Add New
+                appsData.unshift(cardData);
+                alert("New App Card published successfully!");
+            } else {
+                // Update Existing
+                appsData[index] = cardData;
+                alert("App Card updated successfully!");
+                resetForm();
+            }
+
+            renderApps();
+            clearInputs();
+        }
+
+        function editCard(index) {
+            let app = appsData[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('appName').value = app.name;
+            document.getElementById('appCategory').value = app.category;
+            document.getElementById('appSize').value = app.size;
+            document.getElementById('appImage').value = app.image;
+            document.getElementById('appLink').value = app.link;
+
+            document.getElementById('formTitle').innerText = "✏️ Edit App Card (Index: " + index + ")";
+            document.getElementById('saveBtn').innerText = "Update Card";
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+        }
+
+        function deleteCard(index) {
+            if (confirm("Are you sure you want to delete this card permanently?")) {
+                appsData.splice(index, 1);
+                renderApps();
+                resetForm();
+                alert("Card deleted successfully!");
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('editIndex').value = "-1";
+            clearInputs();
+            document.getElementById('formTitle').innerText = "➕ Add New App Card";
+            document.getElementById('saveBtn').innerText = "Publish App Card";
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+        }
+
+        function clearInputs() {
+            document.getElementById('appName').value = '';
+            document.getElementById('appCategory').value = '';
+            document.getElementById('appSize').value = '';
+            document.getElementById('appImage').value = '';
+            document.getElementById('appLink').value = '';
+        }
+
+        // Load apps on page startup
+        window.onload = renderApps;
+    </script>
 </body>
 </html>
