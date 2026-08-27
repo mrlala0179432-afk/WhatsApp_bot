@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LALA DIGITAL - Pro App & Game Hub</title>
+    <title>LALADIGITAL - Pro App & Game Hub</title>
     
     <!-- 🌐 ব্রাউজার ট্যাবের লোগো -->
     <link rel="icon" type="image/jpeg" href="tiktok_pic.jpg">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -34,65 +39,86 @@
         .social-btn-3d:active {
             transform: translateY(2px);
         }
-        .banner-3d {
-            box-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.4), 0 0 15px rgba(168, 85, 247, 0.3);
-            transition: transform 0.3s ease;
+        /* Glowing Ambient Lighting Background Effect */
+        .ambient-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.05) 50%, transparent 100%);
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+            pointer-events-none;
+            animation: pulseGlow 6s infinite alternate;
         }
-        .banner-3d:hover {
-            transform: scale(1.01);
+        @keyframes pulseGlow {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+            100% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+        }
+        .banner-container {
+            box-shadow: 0 15px 35px -10px rgba(99, 102, 241, 0.3), 0 0 20px rgba(168, 85, 247, 0.2);
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between relative overflow-x-hidden dark:bg-slate-950 dark:text-slate-100 bg-slate-50 text-slate-900 transition-colors duration-300">
 
-    <div>
+    <!-- Background Ambient Glow Effect -->
+    <div class="ambient-glow"></div>
+
+    <div class="relative z-10">
         <!-- Navbar -->
-        <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <header class="sticky top-0 z-50 bg-slate-900/80 dark:bg-slate-900/80 bg-white/80 backdrop-blur-md border-b border-slate-800/50 dark:border-slate-800/50 border-slate-200">
+            <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 
                 <!-- Logo & Title -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 overflow-hidden border border-indigo-500/30">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 overflow-hidden border border-indigo-500/30">
                         <img src="tiktok_pic.jpg" alt="Logo" class="w-full h-full object-cover">
                     </div>
-                    <span class="text-xl md:text-2xl font-black tracking-wider bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">LALADIGITAL</span>
+                    <span class="text-lg md:text-2xl font-black tracking-wider bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">LALADIGITAL</span>
                 </div>
                 
-                <!-- Social Media Buttons -->
-                <div class="flex items-center space-x-2">
-                    <a href="https://youtube.com/@lalagamer100?si=ux3pOxs5lVMtoIgl" target="_blank" class="social-btn-3d bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
+                <!-- Social Media Buttons & Controls -->
+                <div class="flex items-center space-x-1.5 md:space-x-2">
+                    <a href="https://youtube.com/@lalagamer100?si=ux3pOxs5lVMtoIgl" target="_blank" class="social-btn-3d bg-red-600 hover:bg-red-500 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
                         <i class="fa-brands fa-youtube text-sm"></i>
                         <span class="hidden md:inline">YouTube</span>
                     </a>
-                    <a href="https://t.me/toplalabd" target="_blank" class="social-btn-3d bg-sky-500 hover:bg-sky-400 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
+                    <a href="https://t.me/toplalabd" target="_blank" class="social-btn-3d bg-sky-500 hover:bg-sky-400 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
                         <i class="fa-brands fa-telegram text-sm"></i>
                         <span class="hidden md:inline">Telegram</span>
                     </a>
-                    <a href="https://tiktok.com/@lalagamer10k" target="_blank" class="social-btn-3d bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
+                    <a href="https://tiktok.com/@lalagamer10k" target="_blank" class="social-btn-3d bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
                         <i class="fa-brands fa-tiktok text-sm text-pink-500"></i>
                         <span class="hidden md:inline">TikTok 1</span>
                     </a>
-                    <a href="https://tiktok.com/@rdx_lala1" target="_blank" class="social-btn-3d bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
+                    <a href="https://tiktok.com/@rdx_lala1" target="_blank" class="social-btn-3d bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
                         <i class="fa-brands fa-tiktok text-sm text-cyan-400"></i>
                         <span class="hidden md:inline">TikTok 2</span>
                     </a>
+
+                    <!-- Dark/Light Mode Moon Toggle Button -->
+                    <button onclick="toggleTheme()" class="bg-slate-800/80 dark:bg-slate-800/80 bg-slate-200 border border-slate-700 text-amber-400 p-2 rounded-xl text-xs font-bold shadow-md hover:scale-105 transition" title="Toggle Theme">
+                        <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                    </button>
                 </div>
             </div>
         </header>
 
-        <!-- 3D Banner Section (Banner.png) -->
+        <!-- Perfect Fitted 3D Banner Section (Banner.png) -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
-            <div class="banner-3d rounded-3xl overflow-hidden border border-indigo-500/30 bg-slate-800">
-                <img src="Banner.png" alt="Featured Banner" class="w-full h-48 md:h-80 object-cover">
+            <div class="banner-container rounded-3xl overflow-hidden border border-indigo-500/30 bg-slate-900 aspect-[21/9] md:aspect-[3/1] relative flex items-center justify-center shadow-2xl">
+                <img src="Banner.png" alt="Featured Banner" class="w-full h-full object-cover object-center">
             </div>
         </section>
 
         <!-- Popular Apps Section -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold flex items-center space-x-2">
+                <h2 class="text-xl md:text-2xl font-bold flex items-center space-x-2">
                     <span class="text-amber-400">🔥</span>
-                    <span>Popular Apps & Games</span>
+                    <span class="dark:text-white text-slate-900">Popular Apps & Games</span>
                 </h2>
             </div>
 
@@ -103,17 +129,32 @@
         </main>
     </div>
 
-    <!-- Footer with Secret Admin Trigger -->
-    <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500 relative">
-        <p>&copy; 2026 LALADIGITAL. All rights reserved. 
-           <button onclick="openAdminPanel()" class="text-slate-700 hover:text-slate-500 ml-2">⚙️</button>
-        </p>
+    <!-- Footer with Secret Admin Trigger & Music Control -->
+    <footer class="bg-slate-950 dark:bg-slate-950 bg-slate-200 border-t border-slate-800/60 dark:border-slate-800/60 border-slate-300 py-6 text-center text-xs text-slate-500 relative z-10 mt-12">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>&copy; 2026 LALADIGITAL. All rights reserved. 
+               <button onclick="openAdminPanel()" class="text-slate-700 hover:text-slate-500 ml-2">⚙️</button>
+            </p>
+            <!-- Background Music Audio Player Controls -->
+            <div class="flex items-center space-x-2 bg-slate-900 dark:bg-slate-900 bg-white border border-slate-800 px-3 py-1.5 rounded-full shadow-md">
+                <i class="fa-solid fa-music text-indigo-400 animate-bounce"></i>
+                <span class="text-[11px] text-slate-300 dark:text-slate-300 text-slate-700">Background Music</span>
+                <button onclick="toggleMusic()" id="musicBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">
+                    Play
+                </button>
+            </div>
+        </div>
     </footer>
 
-    <!-- Advanced Admin Panel Modal with Public Cards Manager & Edit/Delete Support -->
+    <!-- Background Audio Element (song.mp3) -->
+    <audio id="bgMusic" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Advanced Admin Panel Modal -->
     <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 w-full max-w-2xl shadow-2xl relative my-8">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 w-full max-w-2xl shadow-2xl relative my-8 text-slate-100">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
                 <h3 class="text-xl font-bold text-white flex items-center space-x-2">
                     <i class="fa-solid fa-shield-halved text-indigo-400"></i>
                     <span>Admin Panel & Public List Manager</span>
@@ -122,37 +163,37 @@
             </div>
 
             <!-- Card Add / Edit Form -->
-            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-700/50 mb-6">
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-6">
                 <h4 id="formTitle" class="text-sm font-bold text-indigo-400 mb-3">➕ Add New App Card</h4>
                 <input type="hidden" id="editIndex" value="-1">
                 <div class="space-y-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">App Name</label>
-                        <input type="text" id="appName" placeholder="e.g. Shizuku apk" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input type="text" id="appName" placeholder="e.g. Shizuku apk" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Category</label>
-                            <input type="text" id="appCategory" placeholder="Tools / Action" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                            <input type="text" id="appCategory" placeholder="Tools / Action" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Size</label>
-                            <input type="text" id="appSize" placeholder="15 MB" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                            <input type="text" id="appSize" placeholder="15 MB" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">Image Filename</label>
-                        <input type="text" id="appImage" placeholder="Shizuku.png" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                        <input type="text" id="appImage" placeholder="Shizuku.png" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">Download Direct Link</label>
-                        <input type="text" id="appLink" placeholder="https://t.me/..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                        <input type="text" id="appLink" placeholder="https://t.me/..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
                     </div>
                     <div class="flex space-x-2 pt-2">
                         <button onclick="saveCard()" id="saveBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl btn-3d text-sm">
                             Publish App Card
                         </button>
-                        <button onclick="resetForm()" id="cancelEditBtn" class="hidden bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 px-4 rounded-xl text-sm">
+                        <button onclick="resetForm()" id="cancelEditBtn" class="hidden bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm">
                             Cancel
                         </button>
                     </div>
@@ -172,9 +213,9 @@
         </div>
     </div>
 
-    <!-- JavaScript for Admin Management & LocalStorage Persistence -->
+    <!-- JavaScript for Functionality -->
     <script>
-        // Initial Default Data (Shizuku apk)
+        // Initial Default Data
         let appsData = JSON.parse(localStorage.getItem('lalaji_apps')) || [
             {
                 name: "Shizuku apk",
@@ -193,14 +234,13 @@
             adminList.innerHTML = '';
 
             appsData.forEach((app, index) => {
-                // 1. Render Public Website Card
                 grid.innerHTML += `
-                    <div class="app-card bg-slate-800/80 backdrop-blur border border-slate-700/60 rounded-2xl p-4 flex flex-col items-center text-center relative group">
-                        <span class="absolute top-3 right-3 bg-amber-500/20 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-md">Live</span>
-                        <img src="${app.image}" alt="${app.name}" class="w-16 h-16 rounded-2xl shadow-md mb-3 group-hover:scale-105 transition object-cover bg-slate-700">
-                        <h3 class="font-bold text-sm text-slate-200 truncate w-full">${app.name}</h3>
+                    <div class="app-card dark:bg-slate-900/80 bg-white/80 backdrop-blur border dark:border-slate-800 border-slate-200 rounded-2xl p-4 flex flex-col items-center text-center relative group shadow-lg">
+                        <span class="absolute top-3 right-3 bg-amber-500/20 text-amber-500 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-md">Live</span>
+                        <img src="${app.image}" alt="${app.name}" class="w-16 h-16 rounded-2xl shadow-md mb-3 group-hover:scale-105 transition object-cover bg-slate-800">
+                        <h3 class="font-bold text-sm dark:text-slate-200 text-slate-800 truncate w-full">${app.name}</h3>
                         <span class="text-[11px] text-slate-400 mt-0.5">${app.category}</span>
-                        <div class="w-full mt-4 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-700/50 pt-2">
+                        <div class="w-full mt-4 flex items-center justify-between text-[11px] text-slate-400 border-t dark:border-slate-800 border-slate-100 pt-2">
                             <span><i class="fa-solid fa-hard-drive text-indigo-400"></i> ${app.size}</span>
                             <span><i class="fa-solid fa-code-branch text-emerald-400"></i> v1.0</span>
                         </div>
@@ -211,9 +251,8 @@
                     </div>
                 `;
 
-                // 2. Render Admin Public Control List
                 adminList.innerHTML += `
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-700/80 p-2.5 rounded-xl text-xs">
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2.5 rounded-xl text-xs">
                         <div class="flex items-center space-x-3 overflow-hidden">
                             <img src="${app.image}" class="w-8 h-8 rounded-lg object-cover bg-slate-800">
                             <div class="truncate">
@@ -231,6 +270,57 @@
 
             localStorage.setItem('lalaji_apps', JSON.stringify(appsData));
         }
+
+        // Dark / Light Mode Toggle with Moon/Sun Icon
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                themeIcon.className = "fa-solid fa-sun text-sm text-amber-400";
+                localStorage.setItem('lalaji_theme', 'light');
+            } else {
+                html.classList.add('dark');
+                themeIcon.className = "fa-solid fa-moon text-sm text-amber-400";
+                localStorage.setItem('lalaji_theme', 'dark');
+            }
+        }
+
+        // Check saved theme on load
+        if (localStorage.getItem('lalaji_theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.getElementById('themeIcon').className = "fa-solid fa-sun text-sm text-amber-400";
+        }
+
+        // Background Music Control
+        let isPlaying = false;
+        function toggleMusic() {
+            let music = document.getElementById('bgMusic');
+            let btn = document.getElementById('musicBtn');
+            if (isPlaying) {
+                music.pause();
+                btn.innerText = "Play";
+                isPlaying = false;
+            } else {
+                music.play().then(() => {
+                    btn.innerText = "Pause";
+                    isPlaying = true;
+                }).catch(e => {
+                    alert("Click anywhere on the page first to enable audio autoplay!");
+                });
+            }
+        }
+
+        // Auto play audio on first user interaction if blocked by browser
+        document.addEventListener('click', function initAudio() {
+            let music = document.getElementById('bgMusic');
+            if (!isPlaying && music.paused) {
+                music.play().then(() => {
+                    isPlaying = true;
+                    document.getElementById('musicBtn').innerText = "Pause";
+                }).catch(e => {});
+            }
+        }, { once: true });
 
         function openAdminPanel() {
             let pass = prompt("Enter Admin Password:");
@@ -263,11 +353,9 @@
             let cardData = { name, category, size, image, link };
 
             if (index === "-1") {
-                // Add New
                 appsData.unshift(cardData);
                 alert("New App Card published successfully!");
             } else {
-                // Update Existing
                 appsData[index] = cardData;
                 alert("App Card updated successfully!");
                 resetForm();
@@ -301,7 +389,7 @@
         }
 
         function resetForm() {
-            document.getElementById('editIndex').value = "-1";
+            document.getElementById('editIndex').value = index = "-1";
             clearInputs();
             document.getElementById('formTitle').innerText = "➕ Add New App Card";
             document.getElementById('saveBtn').innerText = "Publish App Card";
@@ -316,7 +404,6 @@
             document.getElementById('appLink').value = '';
         }
 
-        // Load apps on page startup
         window.onload = renderApps;
     </script>
 </body>
